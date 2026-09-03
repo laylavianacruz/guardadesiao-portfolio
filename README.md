@@ -34,6 +34,17 @@ This repository is a **sanitized portfolio copy**, not the production codebase. 
 
 Everything else — layout, copy, images, i18n — matches the production site.
 
+## Backend Automations (n8n)
+
+The production site is backed by a set of n8n workflows that run the business day-to-day. None of that automation is exposed in this portfolio copy (same boundary as the chat widget above), but here's what it does:
+
+- **Sião — the WhatsApp assistant.** An AI Agent workflow that receives every inbound WhatsApp message, keeps conversation context, and answers using a knowledge base about services, pricing philosophy, and the installed client base — escalating to a human teammate when a conversation needs one. Getting it production-ready meant handling more than the happy path: WhatsApp delivery-status callbacks (read receipts, not real messages) were originally reaching the AI agent and causing errors, so a filtering step now checks for actual message content before anything reaches the model.
+- **Financial document delivery over WhatsApp.** Clients can ask Sião for a boleto, nota fiscal, or service order without leaving the chat. Because these are financial documents, the workflow never releases one on a name match alone — it also confirms the client's CNPJ before returning anything, and returns the same generic "not found" message either way, so a close guess can't reveal whether a name was almost right.
+- **Monthly document distribution.** A scheduled workflow runs at the start of each month, finds newly generated client documents in cloud storage, emails each client automatically, and files the sent documents away from the pending queue — replacing what used to be a manual, easy-to-forget step.
+- **Lead notifications.** When a new lead comes in through the site, the team gets an email with a one-tap WhatsApp link to the lead's number, so follow-up starts in seconds instead of requiring someone to copy a phone number by hand.
+
+These workflows are treated as business infrastructure, the same way the chat webhook is: purpose and design are documented here, but internals — credentials, endpoints, workflow definitions — are not published.
+
 ## Technologies
 
 - Vanilla HTML/CSS/JS — no framework, no build tooling, no dependencies
@@ -41,6 +52,7 @@ Everything else — layout, copy, images, i18n — matches the production site.
 - `localStorage` for language persistence
 - Google Fonts (Oswald, Work Sans, JetBrains Mono)
 - GitHub Pages for static hosting
+- n8n for backend automation (WhatsApp AI assistant, document delivery, lead notifications)
 
 ## Project Structure
 
@@ -54,11 +66,11 @@ guardadesiao-portfolio/
 
 ## What I Learned
 
-Building a trilingual single-file site pushed me to think carefully about separating content from structure: keeping every string in one `translations` object (rather than scattering `if (lang === ...)` checks through the markup) made adding the third language dramatically faster than adding the second. It also made clear how much easier real automation integrations (like the WhatsApp deep-link and the n8n-backed chat) are to reason about once the static presentation layer is fully decoupled from where the dynamic behavior actually lives — which made this sanitized copy possible without touching a single line of markup or business logic.
+Building a trilingual single-file site pushed me to think carefully about separating content from structure: keeping every string in one `translations` object (rather than scattering `if (lang === ...)` checks through the markup) made adding the third language dramatically faster than adding the second. It also made clear how much easier real automation integrations (like the WhatsApp deep-link and the n8n-backed chat and document workflows) are to reason about once the static presentation layer is fully decoupled from where the dynamic behavior actually lives — which made this sanitized copy possible without touching a single line of markup or business logic.
 
 ## Project Evolution
 
-The production site integrates the chat widget with a live n8n automation and AI backend. For this public portfolio copy, that integration was replaced with a self-contained mock so the code can be shared safely: same UI, same interaction pattern, zero external calls.
+The production site integrates the chat widget with a live n8n automation and AI backend, plus the document-delivery and notification workflows described above. For this public portfolio copy, the chat integration was replaced with a self-contained mock so the code can be shared safely: same UI, same interaction pattern, zero external calls. The other automations aren't part of the static site at all, so they're described here rather than shipped as code.
 
 ## Credits
 
