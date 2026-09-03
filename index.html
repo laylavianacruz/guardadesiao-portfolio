@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guarda de Sião — Tecnologia em Segurança</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#040a14;
+    --navy-900:#0c2647;
+    --navy-800:#123258;
+    --navy-700:#193f6a;
+    --navy-600:#204f82;
+    --cyan-500:#0fa8cf;
+    --cyan-400:#4cc2de;
+    --gold-500:#c6a15b;
+    --gold-400:#dbbc80;
+    --sand-50:#f7f5f1;
+    --sand-100:#ece7dd;
+    --ink-900:#0e131c;
+    --ink-600:#4e5566;
+    --line:rgba(255,255,255,0.10);
+    --radius:3px;
+    --radius-md:7px;
+    --radius-lg:14px;
+    --shadow-sm:0 2px 10px rgba(6,16,32,0.06);
+    --shadow-md:0 14px 34px rgba(6,16,32,0.14);
+    --shadow-lg:0 30px 70px rgba(3,10,22,0.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Work Sans',sans-serif;
+    background:var(--sand-50);
+    color:var(--ink-900);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.015em;
+    font-weight:600;
+    color:var(--navy-900);
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--cyan-500);
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--cyan-500);
+    box-shadow:0 0 0 3px rgba(15,168,207,0.25);
+  }
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:13px 26px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;letter-spacing:0.05em;text-transform:uppercase;
+    border-radius:var(--radius);
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:all .25s cubic-bezier(.2,.8,.2,1);
+  }
+  .btn-primary{background:var(--cyan-500);color:var(--navy-950);font-weight:600;box-shadow:0 8px 22px rgba(15,168,207,0.35);}
+  .btn-primary:hover{background:var(--cyan-400);box-shadow:0 10px 28px rgba(15,168,207,0.45);transform:translateY(-1px);}
+  .btn-ghost{border-color:rgba(255,255,255,0.35);color:#fff;}
+  .btn-ghost:hover{border-color:var(--cyan-500);color:var(--cyan-400);background:rgba(15,168,207,0.08);}
+  .btn-dark{border-color:var(--navy-900);color:var(--navy-900);}
+  .btn-dark:hover{background:var(--navy-900);color:#fff;box-shadow:var(--shadow-sm);}
+
+  /* NAV */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:18px 0;
+    transition:background .3s ease, padding .3s ease, border-color .3s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(4,10,20,0.92);
+    backdrop-filter:blur(8px);
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+    box-shadow:0 8px 24px rgba(0,0,0,0.25);
+  }
+  nav{display:flex;align-items:center;justify-content:space-between;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand img{height:38px;width:auto;}
+  .brand-text{font-family:'Oswald',sans-serif;color:#fff;font-size:15px;letter-spacing:0.04em;line-height:1.15;}
+  .brand-text small{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--cyan-400);text-transform:uppercase;font-weight:400;}
+  .nav-links{display:flex;gap:32px;align-items:center;}
+  .nav-links a{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.06em;
+    text-transform:uppercase;color:rgba(255,255,255,0.75);
+    transition:color .2s;
+  }
+  .nav-links a:hover{color:var(--cyan-400);}
+  .nav-cta{display:flex;gap:12px;align-items:center;}
+  .burger{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;}
+
+  /* LANGUAGE SWITCH */
+  .lang-switch{display:flex;align-items:center;gap:2px;margin-left:18px;padding-left:18px;border-left:1px solid var(--line);}
+  .lang-btn{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.05em;
+    background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;
+    padding:6px 8px;border-radius:2px;transition:color .2s, background .2s;
+  }
+  .lang-btn:hover{color:#fff;}
+  .lang-btn.active{color:var(--navy-950);background:var(--cyan-500);font-weight:600;}
+
+  /* HERO */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    background:radial-gradient(ellipse at 70% 20%, #0a2f5c 0%, var(--navy-950) 55%, #020810 100%);
+    overflow:hidden;
+    display:flex;align-items:center;
+    padding-top:100px;
+  }
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(15,168,207,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,168,207,0.05) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(ellipse at 65% 35%, black 0%, transparent 70%);
+  }
+  .radar{
+    position:absolute;right:-120px;top:50%;transform:translateY(-50%);
+    width:640px;height:640px;border-radius:50%;
+    border:1px solid rgba(15,168,207,0.15);
+    pointer-events:none;
+  }
+  .radar::before,.radar::after{
+    content:"";position:absolute;border-radius:50%;border:1px solid rgba(15,168,207,0.12);
+  }
+  .radar::before{inset:100px;}
+  .radar::after{inset:200px;}
+  .radar-sweep{
+    position:absolute;inset:0;border-radius:50%;
+    background:conic-gradient(from 0deg, rgba(15,168,207,0.35), transparent 30%);
+    animation:spin 6s linear infinite;
+    mix-blend-mode:screen;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){.radar-sweep{animation:none;}}
+
+  .hud-frame{position:absolute;inset:24px;pointer-events:none;}
+  .hud-corner{position:absolute;width:26px;height:26px;border-color:rgba(15,168,207,0.55);}
+  .hud-corner.tl{top:0;left:0;border-top:2px solid;border-left:2px solid;}
+  .hud-corner.tr{top:0;right:0;border-top:2px solid;border-right:2px solid;}
+  .hud-corner.bl{bottom:0;left:0;border-bottom:2px solid;border-left:2px solid;}
+  .hud-corner.br{bottom:0;right:0;border-bottom:2px solid;border-right:2px solid;}
+  .hud-tag{
+    position:absolute;top:24px;right:60px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan-400);
+    letter-spacing:0.08em;text-align:right;opacity:0.85;
+  }
+  .hud-tag .rec{display:inline-flex;align-items:center;gap:6px;color:#ff5c5c;}
+  .hud-tag .rec::before{content:"";width:6px;height:6px;border-radius:50%;background:#ff5c5c;animation:blink 1.4s infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+  .hero-inner{position:relative;z-index:2;}
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.7fr;gap:60px;align-items:center;}
+  .hero-copy{text-align:center;}
+  .hero h1{
+    font-size:clamp(38px,5.4vw,68px);
+    line-height:1.03;color:#fff;letter-spacing:0.005em;
+    margin-bottom:22px;
+  }
+  .hero h1 span{color:var(--cyan-500);}
+  .hero p.lead{
+    font-size:17px;color:rgba(255,255,255,0.72);max-width:520px;margin:0 auto 34px;
+  }
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px;}
+  .hero-stats{display:flex;gap:0;border-top:1px solid var(--line);padding-top:22px;}
+  .hero-stats div{padding-right:34px;margin-right:34px;border-right:1px solid var(--line);}
+  .hero-stats div:last-child{border-right:none;}
+  .hero-stats b{display:block;font-family:'Oswald',sans-serif;font-size:26px;color:#fff;}
+  .hero-stats span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.55);}
+
+  .hero-partner{
+    margin-top:24px;display:inline-flex;align-items:center;gap:14px;
+    padding:13px 20px;border:1px solid var(--gold-500);border-radius:var(--radius-md);
+    background:rgba(198,161,91,0.08);max-width:100%;
+  }
+  .hero-partner .badge-icon{
+    width:34px;height:34px;border-radius:50%;background:var(--gold-500);color:var(--navy-950);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Oswald',sans-serif;
+    flex-shrink:0;font-size:15px;
+  }
+  .hero-partner b{display:block;color:#fff;font-size:13.5px;font-family:'Work Sans',sans-serif;}
+  .hero-partner span{display:block;color:rgba(255,255,255,0.6);font-size:11.5px;margin-top:2px;line-height:1.35;}
+
+  .hero-panel{
+    background:rgba(10,25,48,0.65);
+    border:1px solid var(--line);
+    border-radius:var(--radius-md);
+    padding:22px;
+    backdrop-filter:blur(6px);
+    box-shadow:var(--shadow-lg);
+  }
+  .hero-panel .feed-label{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--cyan-400);
+    letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;
+  }
+  .hero-panel img{border-radius:1px;filter:saturate(0.9) contrast(1.05);}
+  .hero-panel .cap{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.55);}
+  .hero-panel .video-caption{margin-top:12px;font-size:13px;line-height:1.5;color:rgba(255,255,255,0.75);}
+  .hero-panel .video-caption:empty{display:none;margin:0;}
+
+  section{padding:104px 0;}
+  .section-head{max-width:640px;margin-bottom:56px;}
+  .section-head h2{font-size:clamp(28px,3.4vw,42px);line-height:1.08;}
+  .section-head p{color:var(--ink-600);font-size:16px;margin-top:14px;}
+  #servicos .section-head,
+  #processo .section-head,
+  #portfolio .section-head{margin-left:auto;margin-right:auto;text-align:center;}
+  #servicos .section-head .eyebrow,
+  #processo .section-head .eyebrow,
+  #portfolio .section-head .eyebrow{justify-content:center;}
+  #servicos .section-head p,
+  #processo .section-head p,
+  #portfolio .section-head p{text-align:justify;}
+  .on-dark.section-head h2{color:#fff;}
+  .on-dark.section-head p{color:rgba(255,255,255,0.65);}
+  .on-dark .eyebrow{color:var(--cyan-400);}
+
+  /* QUEM SOMOS */
+  .about{background:var(--sand-50);}
+  .about-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:64px;align-items:center;}
+  .about-media{position:relative;}
+  .about-media img{border-radius:var(--radius-md);box-shadow:var(--shadow-md);}
+  .about-badge{
+    position:absolute;bottom:-22px;left:-22px;
+    background:var(--navy-900);color:#fff;
+    padding:18px 24px;border-radius:var(--radius-md);
+    box-shadow:var(--shadow-md);border-bottom:2px solid var(--gold-500);
+    font-family:'Oswald',sans-serif;
+  }
+  .about-badge b{display:block;font-size:34px;color:var(--gold-400);line-height:1;}
+  .about-badge span{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);}
+  .about-text{text-align:center;}
+  .about-text .eyebrow{justify-content:center;}
+  .about-text p{color:var(--ink-600);margin-bottom:16px;font-size:15.5px;text-align:justify;}
+  .about-text p:last-child{margin-bottom:0;}
+  .about-text strong{color:var(--navy-900);}
+
+  /* MVV */
+  .mvv{background:linear-gradient(180deg, var(--navy-950), #0a1f3a 60%, var(--navy-950));position:relative;}
+  .mvv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+  .mvv-card{background:#081a30;padding:38px 30px;border-top:2px solid var(--gold-500);text-align:center;}
+  .mvv-card .num{font-family:'JetBrains Mono',monospace;color:var(--gold-400);font-size:12px;letter-spacing:0.12em;margin-bottom:18px;display:block;}
+  .mvv-card h3{color:#fff;font-size:20px;margin-bottom:12px;}
+  .mvv-card p{color:rgba(255,255,255,0.62);font-size:14.5px;text-align:justify;}
+
+  /* SERVICOS */
+  .services{background:var(--sand-50);}
+  .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:48px;}
+  .svc-card{
+    background:#fff;border:1px solid var(--sand-100);border-radius:var(--radius-md);
+    padding:30px 26px;transition:border-color .25s, transform .25s, box-shadow .25s;
+    box-shadow:var(--shadow-sm);
+  }
+  .svc-card:hover{border-color:var(--cyan-500);transform:translateY(-4px);box-shadow:var(--shadow-md);}
+  .svc-icon{
+    width:44px;height:44px;border-radius:var(--radius);background:var(--navy-900);
+    display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+    color:var(--cyan-400);box-shadow:0 6px 16px rgba(12,38,71,0.3);
+  }
+  .svc-card{text-align:center;}
+  .svc-icon{margin-left:auto;margin-right:auto;}
+  .svc-card h3{font-size:16.5px;color:var(--navy-900);margin-bottom:8px;letter-spacing:0.01em;}
+  .svc-card p{font-size:13.8px;color:var(--ink-600);text-align:justify;}
+  .svc-features{
+    background:linear-gradient(155deg, var(--navy-900), var(--navy-800));border-radius:var(--radius-md);padding:36px 40px;
+    display:grid;grid-template-columns:1fr 1fr;gap:12px 40px;box-shadow:var(--shadow-md);
+  }
+  .svc-features div{
+    display:flex;gap:12px;font-size:14px;color:rgba(255,255,255,0.85);align-items:flex-start;
+  }
+  .svc-features div::before{content:"";min-width:6px;height:6px;background:var(--cyan-500);margin-top:7px;border-radius:1px;}
+
+  /* PROCESSO */
+  .process{background:var(--sand-100);}
+  .process-track{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;margin-top:20px;}
+  .process-track::before{
+    content:"";position:absolute;top:28px;left:10%;right:10%;height:1px;
+    background:repeating-linear-gradient(90deg, var(--navy-900) 0 8px, transparent 8px 16px);
+  }
+  .step{position:relative;text-align:center;padding:0 12px;}
+  .step-dot{
+    width:56px;height:56px;border-radius:50%;background:#fff;border:2px solid var(--navy-900);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+    font-family:'Oswald',sans-serif;font-size:20px;color:var(--navy-900);position:relative;z-index:2;
+    box-shadow:var(--shadow-sm);
+  }
+  .step h3{font-size:14.5px;color:var(--navy-900);letter-spacing:0.01em;}
+
+  /* PORTFOLIO / GALERIA */
+  .portfolio{background:var(--navy-950);}
+  .gallery{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:10px;
+  }
+  .gallery a{display:block;position:relative;overflow:hidden;border:1px solid var(--line);aspect-ratio:3/4;}
+  .gallery img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform .5s ease, filter .3s;filter:saturate(0.85) brightness(0.92);}
+  .gallery a:hover img{transform:scale(1.08);filter:saturate(1) brightness(1);}
+  .gallery a::after{
+    content:attr(data-tag);position:absolute;left:8px;bottom:8px;
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--cyan-400);
+    letter-spacing:0.06em;text-transform:uppercase;
+    background:rgba(4,12,24,0.65);padding:3px 7px;
+    opacity:0;transition:opacity .3s;
+  }
+  .gallery a:hover::after{opacity:1;}
+  .g-tall{grid-row:span 2;}
+
+  /* MARCAS */
+  .brands{background:var(--sand-50);border-top:1px solid var(--sand-100);border-bottom:1px solid var(--sand-100);padding:56px 0;}
+  .brands .wrap{text-align:center;}
+  .brands .lbl{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-600);margin-bottom:26px;}
+  .brand-row{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;}
+  .chip{
+    font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:0.03em;
+    color:var(--navy-800);border:1px solid var(--sand-100);background:#fff;
+    padding:9px 18px;border-radius:var(--radius);box-shadow:var(--shadow-sm);
+  }
+  .partners-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:34px;}
+  .partners-row .chip{color:var(--ink-600);font-family:'Work Sans',sans-serif;font-size:13px;border-style:dashed;}
+
+  /* SIAO IA */
+  .siao{
+    background:linear-gradient(135deg, #061426 0%, var(--navy-900) 100%);
+    position:relative;overflow:hidden;
+  }
+  .siao-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+  .siao h2{color:#fff;font-size:clamp(28px,3.4vw,40px);line-height:1.1;margin-bottom:18px;}
+  .siao p.lead{color:rgba(255,255,255,0.68);font-size:16px;margin-bottom:28px;max-width:480px;}
+  .siao-copy p.lead{text-align:justify;}
+  .siao-points{display:flex;flex-direction:column;gap:14px;margin-bottom:32px;}
+  .siao-points div{display:flex;gap:12px;align-items:flex-start;color:rgba(255,255,255,0.85);font-size:14.5px;}
+  .siao-points div::before{content:"›";color:var(--cyan-500);font-family:'JetBrains Mono',monospace;font-weight:700;}
+
+  .chatmock{
+    background:#0a1e38;border:1px solid var(--line);border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg);overflow:hidden;
+  }
+  .chatmock-head{
+    display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,0.02);
+  }
+  .chatmock-dot{width:34px;height:34px;border-radius:50%;background:var(--cyan-500);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;color:var(--navy-950);font-weight:700;}
+  .chatmock-name{font-family:'Oswald',sans-serif;color:#fff;font-size:14px;letter-spacing:0.03em;}
+  .chatmock-status{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--cyan-400);display:flex;align-items:center;gap:5px;}
+  .chatmock-status::before{content:"";width:6px;height:6px;background:#28d17c;border-radius:50%;}
+  .chatmock-body{padding:20px 18px;display:flex;flex-direction:column;gap:12px;min-height:260px;}
+  .bubble{max-width:80%;padding:11px 14px;border-radius:8px;font-size:13.5px;line-height:1.45;}
+  .bubble.bot{background:rgba(15,168,207,0.12);color:#e7f7fc;border:1px solid rgba(15,168,207,0.25);align-self:flex-start;border-bottom-left-radius:2px;}
+  .bubble.typing{opacity:0.55;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;}
+  .bubble.user{background:var(--cyan-500);color:var(--navy-950);align-self:flex-end;border-bottom-right-radius:2px;font-weight:500;}
+  .chatmock-input{display:flex;gap:10px;padding:14px 18px;border-top:1px solid var(--line);}
+  .chatmock-input input{
+    flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:20px;
+    padding:10px 16px;color:#fff;font-size:13px;font-family:'Work Sans',sans-serif;
+  }
+  .chatmock-input input::placeholder{color:rgba(255,255,255,0.35);}
+  .chatmock-send{width:38px;height:38px;border-radius:50%;background:var(--cyan-500);border:none;display:flex;align-items:center;justify-content:center;color:var(--navy-950);cursor:pointer;}
+
+  /* CONTATO */
+  .contact{background:var(--sand-50);}
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;}
+  .contact-info h2{font-size:clamp(28px,3.4vw,40px);margin-bottom:16px;}
+  .contact-info p{color:var(--ink-600);margin-bottom:30px;max-width:420px;}
+  .contact-info p{text-align:justify;}
+  .contact-item{display:flex;gap:14px;padding:16px 0;border-top:1px solid var(--sand-100);align-items:flex-start;}
+  .contact-item:last-child{border-bottom:1px solid var(--sand-100);}
+  .contact-item .ic{color:var(--cyan-500);}
+  .contact-item b{display:block;font-family:'Oswald',sans-serif;font-size:14px;color:var(--navy-900);letter-spacing:0.02em;}
+  .contact-item span{font-size:13.5px;color:var(--ink-600);}
+
+  form{background:#fff;border:1px solid var(--sand-100);padding:34px;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-600);margin-bottom:7px;}
+  .field input,.field select,.field textarea{
+    width:100%;padding:12px 14px;border:1px solid var(--sand-100);border-radius:var(--radius);
+    font-family:'Work Sans',sans-serif;font-size:14px;background:var(--sand-50);
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .field textarea{resize:vertical;min-height:90px;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--cyan-500);box-shadow:0 0 0 3px rgba(15,168,207,0.18);}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  form .btn-primary{width:100%;justify-content:center;background:var(--navy-900);color:#fff;box-shadow:none;}
+  form .btn-primary:hover{background:var(--navy-800);box-shadow:var(--shadow-sm);}
+
+  footer{background:var(--navy-950);padding:56px 0 26px;}
+  .foot-top{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid var(--line);}
+  .foot-brand{display:flex;align-items:center;justify-content:center;gap:18px;text-align:center;}
+  .foot-brand img{height:88px;width:auto;flex-shrink:0;}
+  .foot-legal{font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;text-align:justify;max-width:220px;margin:0;}
+  .foot-col h4{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--cyan-400);margin-bottom:16px;}
+  .foot-col a{display:block;font-size:13.5px;color:rgba(255,255,255,0.65);margin-bottom:10px;}
+  .foot-col a:hover{color:#fff;}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:22px;flex-wrap:wrap;gap:10px;}
+  .foot-bottom span{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.4);}
+
+  .wa-float{
+    position:fixed;bottom:26px;right:26px;z-index:90;
+    width:58px;height:58px;border-radius:50%;background:var(--cyan-500);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 30px rgba(15,168,207,0.4);cursor:pointer;
+    border:none;
+  }
+
+  [data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
+  [data-reveal].in{opacity:1;transform:none;}
+
+  @media (max-width: 980px){
+    .nav-links,.nav-cta{display:none;}
+    .burger{display:block;}
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-panel{margin-top:28px;}
+    .about-grid,.siao-grid,.contact-grid{grid-template-columns:1fr;}
+    .mvv-grid{grid-template-columns:1fr;}
+    .svc-grid{grid-template-columns:repeat(2,1fr);}
+    .svc-features{grid-template-columns:1fr;}
+    .process-track{grid-template-columns:repeat(1,1fr);gap:26px;}
+    .process-track::before{display:none;}
+    .gallery{grid-template-columns:repeat(3,1fr);}
+    .foot-top{grid-template-columns:1fr;gap:28px;}
+    .field-row{grid-template-columns:1fr;}
+    .about-badge{position:static;margin-top:-40px;margin-left:16px;display:inline-block;}
+    .foot-brand{flex-direction:column;text-align:center;}
+    .foot-legal{max-width:100%;text-align:center;}
+    nav{gap:10px;}
+    .lang-switch{margin-left:0;padding-left:0;border-left:none;gap:0;flex-shrink:0;}
+    .lang-btn{padding:6px 7px;font-size:10px;}
+    .brand-text small{display:none;}
+  }
+
+  @media (max-width: 420px){
+    .brand-text{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hud-frame">
+  <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+  <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+</div>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <a href="#topo" class="brand">
+        <img src="logo.png" alt="Guarda de Sião">
+        <span class="brand-text">GUARDA DE SIÃO<small data-i18n="brand_tagline">Tecnologia em Segurança</small></span>
+      </a>
+      <div class="nav-links">
+        <a href="#quem-somos" data-i18n="nav_about">Quem somos</a>
+        <a href="#servicos" data-i18n="nav_services">Serviços</a>
+        <a href="#processo" data-i18n="nav_process">Processo</a>
+        <a href="#portfolio" data-i18n="nav_portfolio">Portfólio</a>
+        <a href="#siao" data-i18n="nav_siao">Sião IA</a>
+        <a href="#contato" data-i18n="nav_contact">Contato</a>
+      </div>
+      <div class="lang-switch" id="langSwitch">
+        <button class="lang-btn" data-lang="pt">PT</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="es">ES</button>
+      </div>
+      <button class="burger" id="burgerBtn">☰</button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="topo">
+  <div class="radar"><div class="radar-sweep"></div></div>
+  <div class="hud-tag">
+    <div class="rec">REC</div>
+    <div id="liveClock" class="mono">00:00:00</div>
+  </div>
+  <div class="wrap hero-inner">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <h1 data-reveal data-i18n="hero_h1">Engenharia de segurança para quem <span>exige o melhor</span>.</h1>
+        <p class="lead" data-reveal data-i18n="hero_lead">Projetamos, instalamos e monitoramos sistemas de CFTV, controle de acesso, portões automáticos e cercas elétricas para condomínios de alto padrão — com rigor técnico e suporte 24 horas.</p>
+        <div class="hero-partner" data-reveal>
+          <div class="badge-icon">✓</div>
+          <div>
+            <b data-i18n="hero_partner_title">Parceiro oficial <a href="https://myvillage.com.br/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">My Village</a> — Soluções inteligentes para condomínios</b>
+            <span data-i18n="hero_partner_sub">Única empresa de tecnologia em segurança condominial do Ceará com essa parceria</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-panel" data-reveal>
+        <div class="hero-video-placeholder" style="width:100%;aspect-ratio:16/9;border-radius:1px;background:linear-gradient(135deg,#0b1f3a,#173a63);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#fff;text-align:center;padding:24px;">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/><path d="M10 8.5L16 12L10 15.5V8.5Z" fill="currentColor"/></svg>
+          <span style="opacity:0.85;font-size:0.95rem;max-width:320px;">Vídeo institucional disponível no site ao vivo — removido desta cópia de portfólio para manter o repositório leve.</span>
+          <a href="https://guardadesiao.com" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;font-size:0.9rem;">Ver guardadesiao.com →</a>
+        </div>
+        <p class="video-caption" data-i18n="hero_video_caption"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="quem-somos">
+  <div class="wrap about-grid">
+    <div class="about-media" data-reveal>
+      <img src="photo-2.jpg" alt="Operador monitorando câmeras de segurança">
+      <div class="about-badge"><b>+7</b><span data-i18n="about_badge_label">Anos de excelência<br>em segurança patrimonial</span></div>
+    </div>
+    <div class="about-text" data-reveal>
+      <div class="eyebrow" data-i18n="nav_about">Quem somos</div>
+      <h2 style="font-size:clamp(26px,3vw,36px);margin-bottom:18px;" data-i18n="about_h2">Referência em segurança eletrônica para condomínios de alto padrão</h2>
+      <p data-i18n="about_p1">Há mais de <strong>7 anos</strong>, a Guarda de Sião projeta e opera sistemas de segurança eletrônica para condomínios horizontais e verticais em Fortaleza e toda a região metropolitana do Ceará.</p>
+      <p data-i18n="about_p2">Entregamos <strong>projetos completos</strong> — CFTV, controle de acesso, alarmes perimetrais e monitoramento 24 horas — combinando tecnologia de ponta, rigor técnico e suporte contínuo.</p>
+      <p data-i18n="about_p3">Trabalhamos para que cada condomínio opere com <strong>máxima segurança, eficiência operacional</strong> e total tranquilidade para moradores, síndicos e administradoras.</p>
+    </div>
+  </div>
+</section>
+
+<section class="mvv">
+  <div class="wrap">
+    <div class="mvv-grid" data-reveal>
+      <div class="mvv-card">
+        <span class="num" data-i18n="mvv1_num">01 · MISSÃO</span>
+        <h3 data-i18n="mvv1_h3">Proteger com excelência</h3>
+        <p data-i18n="mvv1_p">Oferecer soluções de segurança eletrônica sob medida para condomínios de alto padrão, unindo tecnologia de precisão, atendimento técnico ágil e confiabilidade em cada projeto.</p>
+      </div>
+      <div class="mvv-card">
+        <span class="num" data-i18n="mvv2_num">02 · VISÃO</span>
+        <h3 data-i18n="mvv2_h3">Referência nacional</h3>
+        <p data-i18n="mvv2_p">Consolidar-se como referência nacional em segurança condominial de alto padrão, reconhecida pela inovação tecnológica, eficiência operacional e excelência no relacionamento com o cliente.</p>
+      </div>
+      <div class="mvv-card">
+        <span class="num" data-i18n="mvv3_num">03 · VALORES</span>
+        <h3 data-i18n="mvv3_h3">Compromisso em cada detalhe</h3>
+        <p data-i18n="mvv3_p">Segurança como prioridade absoluta, tecnologia como aliada estratégica, transparência em cada relação, excelência técnica em cada entrega, e confiança construída com cada cliente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="servicos">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <div class="eyebrow" data-i18n="svc_eyebrow">Soluções integradas</div>
+      <h2 data-i18n="svc_h2">Soluções completas em segurança eletrônica</h2>
+      <p data-i18n="svc_lead">Um ecossistema integrado de equipamentos, software e monitoramento — projetado sob medida para a realidade operacional de cada condomínio.</p>
+    </div>
+    <div class="svc-grid" data-reveal>
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="14" height="10" rx="1.5"/><path d="M16 10l5-2.5v9L16 14"/><circle cx="9" cy="12" r="2.5"/><path d="M6 7V5.5A1.5 1.5 0 0 1 7.5 4h1A1.5 1.5 0 0 1 10 5.5V7"/></svg></div>
+        <h3 data-i18n="svc1_h3">Câmeras de segurança (CFTV)</h3>
+        <p data-i18n="svc1_p">Monitoramento em alta definição, dia e noite, com cobertura estratégica das áreas comuns e perímetro.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="18" height="20" rx="2"/><circle cx="12" cy="10" r="3.2"/><path d="M12 6.8v.01M7.5 17.5c.9-2 2.5-3 4.5-3s3.6 1 4.5 3"/><path d="M7 5.5h.01M17 5.5h.01"/></svg></div>
+        <h3 data-i18n="svc2_h3">Controle de acesso e automatizadores</h3>
+        <p data-i18n="svc2_p">Reconhecimento facial, biometria e tags para portões, garantindo entrada e saída controladas.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="9" height="16" rx="1.5"/><circle cx="10.5" cy="7" r="1.6"/><path d="M8.3 12h4.4M8.3 14.3h2.6"/><path d="M15 5.5c2.5 1 4 3.5 4 6.5s-1.5 5.5-4 6.5"/><path d="M9 18v2.5M12 18v2.5"/></svg></div>
+        <h3 data-i18n="svc3_h3">Portaria autônoma</h3>
+        <p data-i18n="svc3_p">Atendimento remoto e inteligente que reduz custos sem abrir mão da segurança.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="6" rx="1"/><rect x="3" y="10.5" width="18" height="6" rx="1"/><rect x="3" y="18" width="18" height="3.5" rx="1"/><path d="M6.5 6h.01M6.5 13.5h.01"/><path d="M16 6h2M16 13.5h2"/></svg></div>
+        <h3 data-i18n="svc4_h3">Servidores e equipamentos de rede</h3>
+        <p data-i18n="svc4_p">Infraestrutura robusta de rede e armazenamento para operação estável e contínua.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="12" rx="1.5"/><path d="M2 9h20M8 4v12M15 4v5"/><path d="M9 20h6M12 16v4"/></svg></div>
+        <h3 data-i18n="svc5_h3">Centrais de monitoramento</h3>
+        <p data-i18n="svc5_p">Painéis unificados que consolidam todos os pontos de vigilância em uma única visão.</p>
+      </div>
+      <div class="svc-card">
+        <div class="svc-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M22 12h-3M5 12H2"/><path d="M7.2 7.2a6.8 6.8 0 0 0 0 9.6M16.8 7.2a6.8 6.8 0 0 1 0 9.6"/></svg></div>
+        <h3 data-i18n="svc6_h3">Alarmes perimetrais e sensores</h3>
+        <p data-i18n="svc6_p">Sensores inteligentes que detectam invasões antes que se tornem um problema.</p>
+      </div>
+    </div>
+    <div class="svc-features" data-reveal>
+      <div data-i18n="feat1">Atendimento técnico especializado e suporte 24h</div>
+      <div data-i18n="feat2">Integração com sistema de gestão condominial</div>
+      <div data-i18n="feat3">Projetos personalizados para cada condomínio</div>
+      <div data-i18n="feat4">Relacionamento próximo e acompanhamento constante</div>
+      <div data-i18n="feat5">Equipamentos em comodato com manutenção completa</div>
+      <div data-i18n="feat6">Resolução de problemas em até 48h</div>
+    </div>
+  </div>
+</section>
+
+<section class="process" id="processo">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <div class="eyebrow" data-i18n="process_eyebrow">Como trabalhamos</div>
+      <h2 data-i18n="process_h2">Processo de execução</h2>
+      <p data-i18n="process_lead">Da primeira visita técnica à ativação, cada etapa é conduzida com transparência e prazos claros.</p>
+    </div>
+    <div class="process-track" data-reveal>
+      <div class="step"><div class="step-dot">1</div><h3 data-i18n="step1">Diagnóstico<br>técnico</h3></div>
+      <div class="step"><div class="step-dot">2</div><h3 data-i18n="step2">Proposta<br>personalizada</h3></div>
+      <div class="step"><div class="step-dot">3</div><h3 data-i18n="step3">Instalação<br>e testes</h3></div>
+      <div class="step"><div class="step-dot">4</div><h3 data-i18n="step4">Ativação<br>oficial</h3></div>
+      <div class="step"><div class="step-dot">5</div><h3 data-i18n="step5">Suporte<br>contínuo</h3></div>
+    </div>
+  </div>
+</section>
+
+<section class="portfolio" id="portfolio">
+  <div class="wrap">
+    <div class="section-head on-dark" data-reveal>
+      <div class="eyebrow" data-i18n="portfolio_eyebrow">Instagram</div>
+      <h2 data-i18n="portfolio_h2">Acompanhe nossos projetos em tempo real</h2>
+      <p data-i18n="portfolio_lead">Instalações, bastidores e novidades da Guarda de Sião — direto do nosso Instagram.</p>
+      <a href="https://www.instagram.com/guarda.de.siao/reels/" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:22px;display:inline-flex;" data-i18n="portfolio_cta">Seguir no Instagram</a>
+    </div>
+    <div class="gallery" data-reveal>
+      <a href="https://www.instagram.com/guarda.de.siao/reels/" target="_blank" rel="noopener" data-i18n-tag="gal1"><img src="photo-3.jpg"></a>
+      <a href="https://www.instagram.com/guarda.de.siao/reels/" target="_blank" rel="noopener" data-i18n-tag="gal3"><img src="photo-4.jpg"></a>
+      <a href="https://www.instagram.com/guarda.de.siao/reels/" target="_blank" rel="noopener" data-i18n-tag="gal4"><img src="photo-5.jpg"></a>
+      <a href="https://www.instagram.com/guarda.de.siao/reels/" target="_blank" rel="noopener" data-i18n-tag="gal5"><img src="photo-6.jpg"></a>
+      <a href="https://www.instagram.com/guarda.de.siao/reels/" target="_blank" rel="noopener" data-i18n-tag="gal8"><img src="photo-7.jpg"></a>
+      <a href="https://www.instagram.com/guarda.de.siao/reels/" target="_blank" rel="noopener" data-i18n-tag="gal9"><img src="photo-8.jpg"></a>
+    </div>
+  </div>
+</section>
+
+<section class="brands">
+  <div class="wrap">
+    <p style="text-align:center;font-size:14px;color:var(--ink-600);max-width:640px;margin:0 auto 34px;" data-i18n="distributor_note">Equipamentos das principais marcas do mercado, fornecidos com o suporte técnico e logístico da <strong>ISTC Corp</strong>, nossa distribuidora parceira oficial.</p>
+    <div class="lbl" data-reveal data-i18n="brands_lbl">Marcas com as quais trabalhamos</div>
+    <div class="brand-row" data-reveal>
+      <span class="chip">Hikvision</span>
+      <span class="chip">Dahua</span>
+      <span class="chip">Intelbras</span>
+      <span class="chip">PPA</span>
+      <span class="chip">Nice</span>
+      <span class="chip">JVA</span>
+      <span class="chip">Control iD</span>
+      <span class="chip">Future Fibre</span>
+      <span class="chip">Seagate</span>
+      <span class="chip">MCM</span>
+    </div>
+    <div class="lbl" style="margin-top:36px;" data-reveal data-i18n="partners_lbl">Condomínios e parceiros que confiam</div>
+    <div class="partners-row" data-reveal>
+      <span class="chip">Vert Natureza</span>
+      <span class="chip">Azur</span>
+      <span class="chip">Jardins Terra Brasilis</span>
+      <span class="chip">Terras Alphaville Ceará 1</span>
+      <span class="chip">Vitral do Parque</span>
+      <span class="chip">Claro</span>
+    </div>
+  </div>
+</section>
+
+<section class="siao" id="siao">
+  <div class="radar" style="left:-200px;right:auto;opacity:0.5;"><div class="radar-sweep"></div></div>
+  <div class="wrap siao-grid">
+    <div class="siao-copy" data-reveal>
+      <div class="eyebrow" data-i18n="siao_eyebrow">Assistente de atendimento</div>
+      <h2 data-i18n="siao_h2">Sião. Atendimento inteligente, ativo 24 horas.</h2>
+      <p class="lead" data-i18n="siao_lead">A Sião é a assistente virtual da Guarda de Sião, disponível 24 horas por dia — tirando dúvidas, abrindo chamados técnicos e conectando você ao time certo, sem espera.</p>
+      <div class="siao-points">
+        <div data-i18n="siao_point1">Atendimento imediato, a qualquer hora do dia</div>
+        <div data-i18n="siao_point2">Abertura de chamados técnicos e acompanhamento de prazos</div>
+        <div data-i18n="siao_point3">Encaminhamento direto para um especialista quando necessário</div>
+      </div>
+    </div>
+    <div class="chatmock" data-reveal>
+      <div class="chatmock-head">
+        <div class="chatmock-dot">S</div>
+        <div>
+          <div class="chatmock-name">Sião</div>
+          <div class="chatmock-status" data-i18n="siao_status">on-line</div>
+        </div>
+      </div>
+      <div class="chatmock-body" id="siaoChatBody">
+        <div class="bubble bot" data-i18n="chat_bot1">Olá! Eu sou a Sião, assistente da Guarda de Sião 👋 Como posso ajudar a proteger o seu condomínio hoje?</div>
+        <div class="bubble user" data-i18n="chat_user1">Preciso de um orçamento para CFTV em um condomínio de 120 casas.</div>
+        <div class="bubble bot" data-i18n="chat_bot2">Perfeito. Vou registrar seu diagnóstico técnico gratuito e já conectar você com um de nossos especialistas em segurança condominial.</div>
+        <div class="bubble user" data-i18n="chat_user2">Ótimo, obrigado!</div>
+      </div>
+      <div class="chatmock-input">
+        <input type="text" id="siaoChatInput" data-i18n-placeholder="chat_placeholder" placeholder="Digite sua mensagem...">
+        <button class="chatmock-send" id="siaoChatSend" aria-label="Enviar">➤</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contato">
+  <div class="wrap contact-grid">
+    <div class="contact-info" data-reveal>
+      <div class="eyebrow" data-i18n="contact_eyebrow">Fale com a gente</div>
+      <h2 data-i18n="contact_h2">Vamos proteger o seu condomínio?</h2>
+      <p data-i18n="contact_lead">Solicite um diagnóstico técnico gratuito e receba uma proposta personalizada para a realidade do seu condomínio.</p>
+      <div class="contact-item">
+        <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.005c5.46 0 9.91-4.45 9.91-9.92 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2zm5.8 14.19c-.24.68-1.4 1.32-1.94 1.4-.5.08-1.12.11-1.8-.11-.42-.13-.95-.3-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.55-1.17-2.96s.73-2.1 1-2.39c.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.14.07.15.12.32.02.51-.09.19-.14.31-.28.48-.14.16-.29.36-.42.49-.14.14-.28.29-.12.57.16.28.71 1.18 1.53 1.91 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.61-.07.16-.19.69-.81.87-1.09.18-.28.37-.23.62-.14.26.09 1.63.77 1.91.91.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg></span>
+        <div><b data-i18n="contact_phone_label">Telefone / WhatsApp</b><span><a href="https://wa.me/5585992447766" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">+55 85 99244-7766</a></span></div>
+      </div>
+      <div class="contact-item">
+        <span class="ic">✉</span>
+        <div><b data-i18n="contact_email_label">E-mail</b><span><a href="mailto:contato@guardadesiao.com" style="color:inherit;text-decoration:none;">contato@guardadesiao.com</a></span></div>
+      </div>
+      <div class="contact-item">
+        <span class="ic">◎</span>
+        <div><b data-i18n="contact_hours_label">Atendimento</b><span data-i18n="contact_hours_value">Segunda a sexta, 8h às 18h — suporte técnico 24h</span></div>
+      </div>
+    </div>
+    <form data-reveal id="contactForm" onsubmit="return handleContactSubmit(event);">
+      <div class="field-row">
+        <div class="field"><label data-i18n="form_name">Nome</label><input id="cf-name" type="text" required></div>
+        <div class="field"><label data-i18n="form_phone">Telefone</label><input id="cf-phone" type="tel" required></div>
+      </div>
+      <div class="field"><label data-i18n="form_email">E-mail</label><input id="cf-email" type="email" required></div>
+      <div class="field"><label data-i18n="form_condo">Condomínio</label><input id="cf-condo" type="text"></div>
+      <div class="field"><label data-i18n="form_message_label">Mensagem</label><textarea id="cf-message" data-i18n-placeholder="form_message_placeholder" placeholder="Conte um pouco sobre a necessidade do seu condomínio..."></textarea></div>
+      <button class="btn btn-primary" type="submit" data-i18n="form_submit">Solicitar diagnóstico gratuito</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div>
+        <div class="foot-brand" data-reveal><img src="logo.png" alt="Guarda de Sião"><p class="foot-legal" data-i18n="footer_cnpj">GS Tecnologia em Segurança LTDA — CNPJ 29.523.547/0001-53</p></div>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="footer_nav_title">Navegação</h4>
+        <a href="#quem-somos" data-i18n="nav_about">Quem somos</a>
+        <a href="#servicos" data-i18n="nav_services">Serviços</a>
+        <a href="#portfolio" data-i18n="nav_portfolio">Portfólio</a>
+        <a href="#siao" data-i18n="nav_siao">Sião IA</a>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="footer_contact_title">Contato</h4>
+        <a href="https://wa.me/5585992447766" target="_blank" rel="noopener">+55 85 99244-7766</a>
+        <a href="mailto:contato@guardadesiao.com">contato@guardadesiao.com</a>
+        <a href="#" data-i18n="footer_location">Fortaleza · CE</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span data-i18n="footer_copyright">© 2026 Guarda de Sião — Tecnologia em Segurança. Todos os direitos reservados.</span>
+      <span data-i18n="footer_cnpj" style="opacity:0.6;">GS Tecnologia em Segurança LTDA — CNPJ 29.523.547/0001-53</span>
+      <span id="clockFooter" class="mono"></span>
+    </div>
+  </div>
+</footer>
+
+<button class="wa-float" aria-label="Falar com a Sião" data-i18n-aria="wa_float_label" onclick="document.getElementById('siao').scrollIntoView({behavior:'smooth'});">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#040a14" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</button>
+
+<script>
+  // sticky header
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // formulário de contato -> abre WhatsApp com a Sião, mensagem pré-preenchida
+  const WA_NUMBER = '5585992447766';
+  const WA_MESSAGE_TEMPLATES = {
+    pt: (d) => {
+      let t = `Olá! Gostaria de solicitar um diagnóstico técnico gratuito.\n\nNome: ${d.name}\nTelefone: ${d.phone}\nE-mail: ${d.email}`;
+      if (d.condo) t += `\nCondomínio: ${d.condo}`;
+      if (d.message) t += `\nMensagem: ${d.message}`;
+      return t;
+    },
+    en: (d) => {
+      let t = `Hello! I'd like to request a free technical assessment.\n\nName: ${d.name}\nPhone: ${d.phone}\nEmail: ${d.email}`;
+      if (d.condo) t += `\nCondominium: ${d.condo}`;
+      if (d.message) t += `\nMessage: ${d.message}`;
+      return t;
+    },
+    es: (d) => {
+      let t = `¡Hola! Me gustaría solicitar un diagnóstico técnico gratuito.\n\nNombre: ${d.name}\nTeléfono: ${d.phone}\nCorreo: ${d.email}`;
+      if (d.condo) t += `\nCondominio: ${d.condo}`;
+      if (d.message) t += `\nMensaje: ${d.message}`;
+      return t;
+    }
+  };
+  function handleContactSubmit(e){
+    e.preventDefault();
+    const data = {
+      name: document.getElementById('cf-name').value.trim(),
+      phone: document.getElementById('cf-phone').value.trim(),
+      email: document.getElementById('cf-email').value.trim(),
+      condo: document.getElementById('cf-condo').value.trim(),
+      message: document.getElementById('cf-message').value.trim()
+    };
+    const lang = (typeof currentLang !== 'undefined' && WA_MESSAGE_TEMPLATES[currentLang]) ? currentLang : 'pt';
+    const text = WA_MESSAGE_TEMPLATES[lang](data);
+    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank', 'noopener');
+    return false;
+  }
+
+  // live clock (CCTV feel)
+  function tick(){
+    const now = new Date();
+    const locale = (translations[currentLang] && translations[currentLang].clock_locale) || 'pt-BR';
+    const t = now.toLocaleTimeString(locale, {hour12:false});
+    const clock = document.getElementById('liveClock');
+    if(clock) clock.textContent = t;
+    const f = document.getElementById('clockFooter');
+    if(f) f.textContent = now.toLocaleDateString(locale) + ' · ' + t;
+  }
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('[data-reveal]');
+
+  // revela imediatamente o que já está visível na tela no carregamento
+  revealEls.forEach(el=>{
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('in');
+    }
+  });
+
+  // observa o restante para revelar ao rolar (isolado em try/catch:
+  // se o navegador não suportar IntersectionObserver, não trava o resto do script)
+  try {
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:0.1});
+    revealEls.forEach(el=>{ if(!el.classList.contains('in')) io.observe(el); });
+  } catch(e) {
+    revealEls.forEach(el=>el.classList.add('in'));
+  }
+
+  // rede de segurança: garante que nada fique invisível pra sempre
+  setTimeout(()=>{ revealEls.forEach(el=>el.classList.add('in')); }, 2500);
+
+  // mobile burger -> simple toggle of nav links visibility
+  const burger = document.getElementById('burgerBtn');
+  burger.addEventListener('click', ()=>{
+    const links = document.querySelector('.nav-links');
+    const open = links.style.display === 'flex';
+    links.style.display = open ? 'none' : 'flex';
+    links.style.position='fixed';links.style.top='64px';links.style.left='0';links.style.right='0';
+    links.style.flexDirection='column';links.style.background='rgba(5,15,30,0.98)';links.style.padding='24px';
+    links.style.gap='20px';
+  });
+
+  // ---------- i18n ----------
+  const translations = {
+  "pt": {
+    "meta_title": "Guarda de Sião — Tecnologia em Segurança",
+    "html_lang": "pt-BR",
+    "clock_locale": "pt-BR",
+    "brand_tagline": "Tecnologia em Segurança",
+    "nav_about": "Quem somos",
+    "nav_services": "Serviços",
+    "nav_process": "Processo",
+    "nav_portfolio": "Portfólio",
+    "nav_siao": "Sião IA",
+    "nav_contact": "Contato",
+    "nav_cta": "Falar com um especialista",
+    "hero_eyebrow": "Segurança eletrônica de alto padrão · Fortaleza, CE · desde 2018",
+    "hero_h1": "Engenharia de segurança para quem <span>exige o melhor</span>.",
+    "hero_lead": "Projetamos, instalamos e monitoramos sistemas de CFTV, controle de acesso, portões automáticos e cercas elétricas para condomínios de alto padrão — com rigor técnico e suporte 24 horas.",
+    "hero_cta1": "Solicitar diagnóstico técnico gratuito",
+    "hero_cta2": "Conhecer a Sião, atendimento inteligente",
+    "stat1_label": "Anos de experiência",
+    "stat2_label": "Tempo médio de resposta",
+    "stat3_label": "Monitoramento e suporte",
+    "hero_partner_title": "Parceiro oficial <a href=\"https://myvillage.com.br/\" target=\"_blank\" rel=\"noopener\" style=\"color:inherit;text-decoration:underline;\">My Village</a> — Soluções inteligentes para condomínios",
+    "hero_partner_sub": "Única empresa de tecnologia em segurança condominial do Ceará com essa parceria",
+    "hero_video_caption": "",
+    "feed_cam_label": "CAM_04 · PORTARIA",
+    "hero_panel_cap": "Central de monitoramento ativa — múltiplos condomínios, um único painel.",
+    "about_badge_label": "Anos de excelência<br>em segurança patrimonial",
+    "about_h2": "Referência em segurança eletrônica para condomínios de alto padrão",
+    "about_p1": "Há mais de <strong>7 anos</strong>, a Guarda de Sião projeta e opera sistemas de segurança eletrônica para condomínios horizontais e verticais em Fortaleza e toda a região metropolitana do Ceará.",
+    "about_p2": "Entregamos <strong>projetos completos</strong> — CFTV, controle de acesso, alarmes perimetrais e monitoramento 24 horas — combinando tecnologia de ponta, rigor técnico e suporte contínuo.",
+    "about_p3": "Trabalhamos para que cada condomínio opere com <strong>máxima segurança, eficiência operacional</strong> e total tranquilidade para moradores, síndicos e administradoras.",
+    "mvv1_num": "01 · MISSÃO",
+    "mvv1_h3": "Proteger com excelência",
+    "mvv1_p": "Oferecer soluções de segurança eletrônica sob medida para condomínios de alto padrão, unindo tecnologia de precisão, atendimento técnico ágil e confiabilidade em cada projeto.",
+    "mvv2_num": "02 · VISÃO",
+    "mvv2_h3": "Referência nacional",
+    "mvv2_p": "Consolidar-se como referência nacional em segurança condominial de alto padrão, reconhecida pela inovação tecnológica, eficiência operacional e excelência no relacionamento com o cliente.",
+    "mvv3_num": "03 · VALORES",
+    "mvv3_h3": "Compromisso em cada detalhe",
+    "mvv3_p": "Segurança como prioridade absoluta, tecnologia como aliada estratégica, transparência em cada relação, excelência técnica em cada entrega, e confiança construída com cada cliente.",
+    "svc_eyebrow": "Soluções integradas",
+    "svc_h2": "Soluções completas em segurança eletrônica",
+    "svc_lead": "Um ecossistema integrado de equipamentos, software e monitoramento — projetado sob medida para a realidade operacional de cada condomínio.",
+    "svc1_h3": "Câmeras de segurança (CFTV)",
+    "svc1_p": "Monitoramento em alta definição, dia e noite, com cobertura estratégica das áreas comuns e perímetro.",
+    "svc2_h3": "Controle de acesso e automatizadores",
+    "svc2_p": "Reconhecimento facial, biometria e tags para portões, garantindo entrada e saída controladas.",
+    "svc3_h3": "Portaria autônoma",
+    "svc3_p": "Atendimento remoto e inteligente que reduz custos sem abrir mão da segurança.",
+    "svc4_h3": "Servidores e equipamentos de rede",
+    "svc4_p": "Infraestrutura robusta de rede e armazenamento para operação estável e contínua.",
+    "svc5_h3": "Centrais de monitoramento",
+    "svc5_p": "Painéis unificados que consolidam todos os pontos de vigilância em uma única visão.",
+    "svc6_h3": "Alarmes perimetrais e sensores",
+    "svc6_p": "Sensores inteligentes que detectam invasões antes que se tornem um problema.",
+    "feat1": "Atendimento técnico especializado e suporte 24h",
+    "feat2": "Integração com sistema de gestão condominial",
+    "feat3": "Projetos personalizados para cada condomínio",
+    "feat4": "Relacionamento próximo e acompanhamento constante",
+    "feat5": "Equipamentos em comodato com manutenção completa",
+    "feat6": "Resolução de problemas em até 48h",
+    "process_eyebrow": "Como trabalhamos",
+    "process_h2": "Processo de execução",
+    "process_lead": "Da primeira visita técnica à ativação, cada etapa é conduzida com transparência e prazos claros.",
+    "step1": "Diagnóstico<br>técnico",
+    "step2": "Proposta<br>personalizada",
+    "step3": "Instalação<br>e testes",
+    "step4": "Ativação<br>oficial",
+    "step5": "Suporte<br>contínuo",
+    "portfolio_eyebrow": "Instagram",
+    "portfolio_h2": "Acompanhe nossos projetos em tempo real",
+    "portfolio_lead": "Instalações, bastidores e novidades da Guarda de Sião — direto do nosso Instagram.",
+    "portfolio_cta": "Seguir no Instagram",
+    "gal1": "Feiras e eventos do setor",
+    "gal2": "Vista aérea de projeto instalado",
+    "gal3": "Equipamento em campo",
+    "gal4": "Parceiros e clientes",
+    "gal5": "Bastidores da equipe",
+    "gal6": "Rotina da equipe",
+    "gal7": "Visita técnica",
+    "gal8": "Clientes e parceiros",
+    "gal9": "Equipe Guarda de Sião",
+    "gal_central": "Central",
+    "gal_catraca": "Catraca",
+    "gal_cameras": "Câmeras",
+    "gal_videowall": "Video wall",
+    "gal_cancela": "Cancela",
+    "gal_interfone": "Interfone",
+    "gal_rack": "Rack",
+    "gal_operacao": "Operação",
+    "distributor_note": "Equipamentos das principais marcas do mercado, fornecidos com o suporte técnico e logístico da <strong>ISTC Corp</strong>, nossa distribuidora parceira oficial.",
+    "brands_lbl": "Marcas com as quais trabalhamos",
+    "partners_lbl": "Condomínios e parceiros que confiam",
+    "siao_eyebrow": "Assistente de atendimento",
+    "siao_h2": "Sião. Atendimento inteligente, ativo 24 horas.",
+    "siao_lead": "A Sião é a assistente virtual da Guarda de Sião, disponível 24 horas por dia — tirando dúvidas, abrindo chamados técnicos e conectando você ao time certo, sem espera.",
+    "siao_point1": "Atendimento imediato, a qualquer hora do dia",
+    "siao_point2": "Abertura de chamados técnicos e acompanhamento de prazos",
+    "siao_point3": "Encaminhamento direto para um especialista quando necessário",
+    "siao_cta": "Falar com a Sião agora",
+    "siao_status": "on-line",
+    "chat_bot1": "Olá! Eu sou a Sião, assistente da Guarda de Sião 👋 Como posso ajudar a proteger o seu condomínio hoje?",
+    "chat_user1": "Preciso de um orçamento para CFTV em um condomínio de 120 casas.",
+    "chat_bot2": "Perfeito. Vou registrar seu diagnóstico técnico gratuito e já conectar você com um de nossos especialistas em segurança condominial.",
+    "chat_user2": "Ótimo, obrigado!",
+    "chat_placeholder": "Digite sua mensagem...",
+    "contact_eyebrow": "Fale com a gente",
+    "contact_h2": "Vamos proteger o seu condomínio?",
+    "contact_lead": "Solicite um diagnóstico técnico gratuito e receba uma proposta personalizada para a realidade do seu condomínio.",
+    "contact_phone_label": "Telefone / WhatsApp",
+    "contact_email_label": "E-mail",
+    "contact_hours_label": "Atendimento",
+    "contact_hours_value": "Segunda a sexta, 8h às 18h — suporte técnico 24h",
+    "form_name": "Nome",
+    "form_phone": "Telefone",
+    "form_email": "E-mail",
+    "form_condo": "Condomínio",
+    "form_message_label": "Mensagem",
+    "form_message_placeholder": "Conte um pouco sobre a necessidade do seu condomínio...",
+    "form_submit": "Solicitar diagnóstico gratuito",
+    "form_alert": "Formulário de demonstração — conecte a um serviço de envio de e-mail para receber as mensagens.",
+    "footer_verse": "Tecnologia, estrutura e confiança para proteger o que mais importa.",
+    "footer_nav_title": "Navegação",
+    "footer_contact_title": "Contato",
+    "footer_location": "Fortaleza · CE",
+    "footer_copyright": "© 2026 Guarda de Sião — Tecnologia em Segurança. Todos os direitos reservados.",
+    "footer_cnpj": "GS Tecnologia em Segurança LTDA — CNPJ 29.523.547/0001-53",
+    "wa_float_label": "Falar com a Sião"
+  },
+  "en": {
+    "meta_title": "Guarda de Sião — Security Technology",
+    "html_lang": "en",
+    "clock_locale": "en-US",
+    "brand_tagline": "Security Technology",
+    "nav_about": "About us",
+    "nav_services": "Services",
+    "nav_process": "Process",
+    "nav_portfolio": "Portfolio",
+    "nav_siao": "Sião AI",
+    "nav_contact": "Contact",
+    "nav_cta": "Talk to a specialist",
+    "hero_eyebrow": "Premium Electronic Security · Fortaleza, Brazil · since 2018",
+    "hero_h1": "Security engineering for those who <span>demand the best</span>.",
+    "hero_lead": "We design, install and monitor CCTV, access control, automatic gates and electric fencing for premium residential communities — engineered with precision and 24-hour support.",
+    "hero_cta1": "Request a free technical assessment",
+    "hero_cta2": "Meet Sião, our AI-powered support",
+    "stat1_label": "Years of experience",
+    "stat2_label": "Average response time",
+    "stat3_label": "Monitoring & support",
+    "hero_partner_title": "Official <a href=\"https://myvillage.com.br/\" target=\"_blank\" rel=\"noopener\" style=\"color:inherit;text-decoration:underline;\">My Village</a> Partner — Smart solutions for condominiums",
+    "hero_partner_sub": "The only condominium security technology company in Ceará with this partnership",
+    "hero_video_caption": "Full access control. I'm Victor, from Guarda de Sião — today we're at Jardins Terra Brasilis: a gatehouse service with access control. This equipment only lets in residents and pre-authorized visitors. The system integrates with condominium management, the flow is fast, contactless and fully controlled. This is just one of the solutions Guarda de Sião offers your condominium — want to see how it can bring you more security? Send us a message.",
+    "feed_cam_label": "CAM_04 · LOBBY",
+    "hero_panel_cap": "Active monitoring center — multiple condominiums, a single dashboard.",
+    "about_badge_label": "Years of excellence<br>in property security",
+    "about_h2": "A benchmark in electronic security for premium residential communities",
+    "about_p1": "For over <strong>7 years</strong>, Guarda de Sião has designed and operated electronic security systems for gated communities and residential towers across Fortaleza and the greater Ceará metropolitan area.",
+    "about_p2": "We deliver <strong>end-to-end projects</strong> — CCTV, access control, perimeter alarms and 24-hour monitoring — combining cutting-edge technology, technical rigor and continuous support.",
+    "about_p3": "We work to ensure every property operates with <strong>maximum security, operational efficiency</strong>, and complete peace of mind for residents, property managers and administrators.",
+    "mvv1_num": "01 · MISSION",
+    "mvv1_h3": "Protecting with excellence",
+    "mvv1_p": "Delivering tailor-made electronic security solutions for premium residential communities, combining precision technology, responsive technical service and reliability in every project.",
+    "mvv2_num": "02 · VISION",
+    "mvv2_h3": "A national benchmark",
+    "mvv2_p": "To become a national benchmark in premium residential security, recognized for technological innovation, operational efficiency and excellence in client relationships.",
+    "mvv3_num": "03 · VALUES",
+    "mvv3_h3": "Commitment in every detail",
+    "mvv3_p": "Security as an absolute priority, technology as a strategic ally, transparency in every relationship, technical excellence in every delivery, and trust built with every client.",
+    "svc_eyebrow": "Integrated Solutions",
+    "svc_h2": "Complete electronic security solutions",
+    "svc_lead": "An integrated ecosystem of equipment, software and monitoring — engineered around the operational reality of each community.",
+    "svc1_h3": "Security cameras (CCTV)",
+    "svc1_p": "High-definition monitoring, day and night, with strategic coverage of common areas and the perimeter.",
+    "svc2_h3": "Access control and automation",
+    "svc2_p": "Facial recognition, biometrics and gate tags, ensuring controlled entry and exit.",
+    "svc3_h3": "Autonomous reception",
+    "svc3_p": "Smart remote reception that cuts costs without compromising security.",
+    "svc4_h3": "Servers and network equipment",
+    "svc4_p": "Robust network and storage infrastructure for stable, continuous operation.",
+    "svc5_h3": "Monitoring centers",
+    "svc5_p": "Unified dashboards that consolidate every surveillance point into a single view.",
+    "svc6_h3": "Perimeter alarms and sensors",
+    "svc6_p": "Smart sensors that detect intrusions before they become a problem.",
+    "feat1": "Specialized technical service and 24-hour support",
+    "feat2": "Integration with condominium management systems",
+    "feat3": "Custom projects for every condominium",
+    "feat4": "Close relationship and constant follow-up",
+    "feat5": "Equipment on loan with full maintenance",
+    "feat6": "Issue resolution within 48 hours",
+    "process_eyebrow": "How we work",
+    "process_h2": "Our process",
+    "process_lead": "From the first technical visit to activation, every step is carried out with transparency and clear timelines.",
+    "step1": "Technical<br>assessment",
+    "step2": "Custom<br>proposal",
+    "step3": "Installation<br>&amp; testing",
+    "step4": "Official<br>activation",
+    "step5": "Ongoing<br>support",
+    "portfolio_eyebrow": "Instagram",
+    "portfolio_h2": "Follow our projects in real time",
+    "portfolio_lead": "Installations, behind the scenes and news from Guarda de Sião — straight from our Instagram.",
+    "portfolio_cta": "Follow on Instagram",
+    "gal1": "Industry trade shows and events",
+    "gal2": "Aerial view of an installed project",
+    "gal3": "Equipment in the field",
+    "gal4": "Partners and clients",
+    "gal5": "Behind the scenes with our team",
+    "gal6": "Team at work",
+    "gal7": "Technical site visit",
+    "gal8": "Clients and partners",
+    "gal9": "The Guarda de Sião team",
+    "gal_central": "Control room",
+    "gal_catraca": "Turnstile",
+    "gal_cameras": "Cameras",
+    "gal_videowall": "Video wall",
+    "gal_cancela": "Barrier gate",
+    "gal_interfone": "Intercom",
+    "gal_rack": "Rack",
+    "gal_operacao": "Operations",
+    "distributor_note": "Equipment from leading global brands, backed by the technical and logistics support of <strong>ISTC Corp</strong>, our official distribution partner.",
+    "brands_lbl": "Brands we work with",
+    "partners_lbl": "Condominiums and partners who trust us",
+    "siao_eyebrow": "Service assistant",
+    "siao_h2": "Sião. Smart support, available 24 hours a day.",
+    "siao_lead": "Sião is Guarda de Sião's virtual assistant, available around the clock — answering questions, opening technical tickets and connecting you to the right team, with no wait.",
+    "siao_point1": "Instant support, any time of day",
+    "siao_point2": "Technical ticket creation and deadline tracking",
+    "siao_point3": "Direct hand-off to a specialist when needed",
+    "siao_cta": "Talk to Sião now",
+    "siao_status": "online",
+    "chat_bot1": "Hi! I'm Sião, the Guarda de Sião assistant 👋 How can I help protect your condominium today?",
+    "chat_user1": "I need a CCTV quote for a condominium with 120 homes.",
+    "chat_bot2": "Perfect. I'll register your free technical assessment and connect you with one of our condominium security specialists.",
+    "chat_user2": "Great, thank you!",
+    "chat_placeholder": "Type your message...",
+    "contact_eyebrow": "Get in touch",
+    "contact_h2": "Let's protect your condominium",
+    "contact_lead": "Request a free technical assessment and receive a proposal tailored to your condominium.",
+    "contact_phone_label": "Phone / WhatsApp",
+    "contact_email_label": "Email",
+    "contact_hours_label": "Business hours",
+    "contact_hours_value": "Monday to Friday, 8am–6pm — 24-hour technical support",
+    "form_name": "Name",
+    "form_phone": "Phone",
+    "form_email": "Email",
+    "form_condo": "Condominium",
+    "form_message_label": "Message",
+    "form_message_placeholder": "Tell us a bit about your condominium's needs...",
+    "form_submit": "Request free assessment",
+    "form_alert": "Demo form — connect an email delivery service to receive messages.",
+    "footer_verse": "Technology, structure and trust to protect what matters most.",
+    "footer_nav_title": "Navigation",
+    "footer_contact_title": "Contact",
+    "footer_location": "Fortaleza · CE, Brazil",
+    "footer_copyright": "© 2026 Guarda de Sião — Security Technology. All rights reserved.",
+    "footer_cnpj": "GS Tecnologia em Segurança LTDA — Tax ID (CNPJ) 29.523.547/0001-53",
+    "wa_float_label": "Talk to Sião"
+  },
+  "es": {
+    "meta_title": "Guarda de Sião — Tecnología en Seguridad",
+    "html_lang": "es",
+    "clock_locale": "es-ES",
+    "brand_tagline": "Tecnología en Seguridad",
+    "nav_about": "Quiénes somos",
+    "nav_services": "Servicios",
+    "nav_process": "Proceso",
+    "nav_portfolio": "Portafolio",
+    "nav_siao": "Sião IA",
+    "nav_contact": "Contacto",
+    "nav_cta": "Hablar con un especialista",
+    "hero_eyebrow": "Seguridad electrónica premium · Fortaleza, Brasil · desde 2018",
+    "hero_h1": "Ingeniería de seguridad para quienes <span>exigen lo mejor</span>.",
+    "hero_lead": "Diseñamos, instalamos y monitoreamos sistemas de CCTV, control de acceso, portones automáticos y cercas eléctricas para condominios de alto nivel — con rigor técnico y soporte 24 horas.",
+    "hero_cta1": "Solicitar diagnóstico técnico gratuito",
+    "hero_cta2": "Conocer a Sião, atención inteligente",
+    "stat1_label": "Años de experiencia",
+    "stat2_label": "Tiempo medio de respuesta",
+    "stat3_label": "Monitoreo y soporte",
+    "hero_partner_title": "Socio oficial de <a href=\"https://myvillage.com.br/\" target=\"_blank\" rel=\"noopener\" style=\"color:inherit;text-decoration:underline;\">My Village</a> — Soluciones inteligentes para condominios",
+    "hero_partner_sub": "La única empresa de tecnología en seguridad condominial de Ceará con esta alianza",
+    "hero_video_caption": "Control total de acceso. Soy Victor, de Guarda de Sião — hoy estamos aquí en Jardins Terra Brasilis: un servicio de portería con control de acceso. Este equipo libera el acceso solo a residentes y personas previamente autorizadas. El sistema está integrado a la gestión del condominio, el flujo es rápido, sin contacto físico y totalmente controlado. Esta es solo una de las soluciones que Guarda de Sião tiene para tu condominio — ¿quieres ver cómo puede traerte más seguridad? Escríbenos.",
+    "feed_cam_label": "CAM_04 · RECEPCIÓN",
+    "hero_panel_cap": "Central de monitoreo activa — múltiples condominios, un solo panel.",
+    "about_badge_label": "Años de excelencia<br>en seguridad patrimonial",
+    "about_h2": "Referencia en seguridad electrónica para condominios de alto nivel",
+    "about_p1": "Desde hace más de <strong>7 años</strong>, Guarda de Sião diseña y opera sistemas de seguridad electrónica para condominios horizontales y verticales en Fortaleza y toda el área metropolitana de Ceará.",
+    "about_p2": "Entregamos <strong>proyectos completos</strong> — CCTV, control de acceso, alarmas perimetrales y monitoreo 24 horas — combinando tecnología de punta, rigor técnico y soporte continuo.",
+    "about_p3": "Trabajamos para que cada condominio opere con <strong>máxima seguridad, eficiencia operativa</strong> y total tranquilidad para residentes, administradores y síndicos.",
+    "mvv1_num": "01 · MISIÓN",
+    "mvv1_h3": "Proteger con excelencia",
+    "mvv1_p": "Ofrecer soluciones de seguridad electrónica a medida para condominios de alto nivel, combinando tecnología de precisión, servicio técnico ágil y confiabilidad en cada proyecto.",
+    "mvv2_num": "02 · VISIÓN",
+    "mvv2_h3": "Referencia nacional",
+    "mvv2_p": "Consolidarse como referencia nacional en seguridad condominial de alto nivel, reconocida por la innovación tecnológica, la eficiencia operativa y la excelencia en la relación con el cliente.",
+    "mvv3_num": "03 · VALORES",
+    "mvv3_h3": "Compromiso en cada detalle",
+    "mvv3_p": "Seguridad como prioridad absoluta, tecnología como aliada estratégica, transparencia en cada relación, excelencia técnica en cada entrega, y confianza construida con cada cliente.",
+    "svc_eyebrow": "Soluciones integradas",
+    "svc_h2": "Soluciones completas en seguridad electrónica",
+    "svc_lead": "Un ecosistema integrado de equipos, software y monitoreo — diseñado a medida para la realidad operativa de cada condominio.",
+    "svc1_h3": "Cámaras de seguridad (CCTV)",
+    "svc1_p": "Monitoreo en alta definición, día y noche, con cobertura estratégica de las áreas comunes y el perímetro.",
+    "svc2_h3": "Control de acceso y automatización",
+    "svc2_p": "Reconocimiento facial, biometría y tags para portones, garantizando entrada y salida controladas.",
+    "svc3_h3": "Portería autónoma",
+    "svc3_p": "Atención remota e inteligente que reduce costos sin renunciar a la seguridad.",
+    "svc4_h3": "Servidores y equipos de red",
+    "svc4_p": "Infraestructura robusta de red y almacenamiento para una operación estable y continua.",
+    "svc5_h3": "Centrales de monitoreo",
+    "svc5_p": "Paneles unificados que consolidan todos los puntos de vigilancia en una sola vista.",
+    "svc6_h3": "Alarmas perimetrales y sensores",
+    "svc6_p": "Sensores inteligentes que detectan intrusiones antes de que se conviertan en un problema.",
+    "feat1": "Atención técnica especializada y soporte 24h",
+    "feat2": "Integración con sistema de gestión condominial",
+    "feat3": "Proyectos personalizados para cada condominio",
+    "feat4": "Relación cercana y seguimiento constante",
+    "feat5": "Equipos en comodato con mantenimiento completo",
+    "feat6": "Resolución de problemas en hasta 48h",
+    "process_eyebrow": "Cómo trabajamos",
+    "process_h2": "Proceso de ejecución",
+    "process_lead": "Desde la primera visita técnica hasta la activación, cada etapa se realiza con transparencia y plazos claros.",
+    "step1": "Diagnóstico<br>técnico",
+    "step2": "Propuesta<br>personalizada",
+    "step3": "Instalación<br>y pruebas",
+    "step4": "Activación<br>oficial",
+    "step5": "Soporte<br>continuo",
+    "portfolio_eyebrow": "Instagram",
+    "portfolio_h2": "Sigue nuestros proyectos en tiempo real",
+    "portfolio_lead": "Instalaciones, bastidores y novedades de Guarda de Sião — directo desde nuestro Instagram.",
+    "portfolio_cta": "Seguir en Instagram",
+    "gal1": "Ferias y eventos del sector",
+    "gal2": "Vista aérea de un proyecto instalado",
+    "gal3": "Equipo en campo",
+    "gal4": "Socios y clientes",
+    "gal5": "Detrás de escena con el equipo",
+    "gal6": "El equipo en acción",
+    "gal7": "Visita técnica",
+    "gal8": "Clientes y socios",
+    "gal9": "El equipo de Guarda de Sião",
+    "gal_central": "Central",
+    "gal_catraca": "Torniquete",
+    "gal_cameras": "Cámaras",
+    "gal_videowall": "Video wall",
+    "gal_cancela": "Barrera",
+    "gal_interfone": "Interfono",
+    "gal_rack": "Rack",
+    "gal_operacao": "Operación",
+    "distributor_note": "Equipos de las principales marcas del mercado, con el respaldo técnico y logístico de <strong>ISTC Corp</strong>, nuestra distribuidora socia oficial.",
+    "brands_lbl": "Marcas con las que trabajamos",
+    "partners_lbl": "Condominios y socios que confían en nosotros",
+    "siao_eyebrow": "Asistente de atención",
+    "siao_h2": "Sião. Atención inteligente, activa las 24 horas.",
+    "siao_lead": "Sião es la asistente virtual de Guarda de Sião, disponible las 24 horas del día — respondiendo dudas, abriendo tickets técnicos y conectándote con el equipo correcto, sin espera.",
+    "siao_point1": "Atención inmediata, a cualquier hora del día",
+    "siao_point2": "Apertura de tickets técnicos y seguimiento de plazos",
+    "siao_point3": "Derivación directa a un especialista cuando sea necesario",
+    "siao_cta": "Hablar con Sião ahora",
+    "siao_status": "en línea",
+    "chat_bot1": "¡Hola! Soy Sião, la asistente de Guarda de Sião 👋 ¿Cómo puedo ayudar a proteger tu condominio hoy?",
+    "chat_user1": "Necesito un presupuesto de CCTV para un condominio de 120 casas.",
+    "chat_bot2": "Perfecto. Voy a registrar tu diagnóstico técnico gratuito y conectarte con uno de nuestros especialistas en seguridad condominial.",
+    "chat_user2": "¡Genial, gracias!",
+    "chat_placeholder": "Escribe tu mensaje...",
+    "contact_eyebrow": "Habla con nosotros",
+    "contact_h2": "Vamos a proteger tu condominio",
+    "contact_lead": "Solicita un diagnóstico técnico gratuito y recibe una propuesta personalizada para tu condominio.",
+    "contact_phone_label": "Teléfono / WhatsApp",
+    "contact_email_label": "Correo electrónico",
+    "contact_hours_label": "Atención",
+    "contact_hours_value": "Lunes a viernes, 8h a 18h — soporte técnico 24h",
+    "form_name": "Nombre",
+    "form_phone": "Teléfono",
+    "form_email": "Correo electrónico",
+    "form_condo": "Condominio",
+    "form_message_label": "Mensaje",
+    "form_message_placeholder": "Cuéntanos un poco sobre la necesidad de tu condominio...",
+    "form_submit": "Solicitar diagnóstico gratuito",
+    "form_alert": "Formulario de demostración — conecta un servicio de envío de correo para recibir los mensajes.",
+    "footer_verse": "Tecnología, estructura y confianza para proteger lo que más importa.",
+    "footer_nav_title": "Navegación",
+    "footer_contact_title": "Contacto",
+    "footer_location": "Fortaleza · CE, Brasil",
+    "footer_copyright": "© 2026 Guarda de Sião — Tecnología en Seguridad. Todos los derechos reservados.",
+    "footer_cnpj": "GS Tecnologia em Segurança LTDA — CNPJ (Brasil) 29.523.547/0001-53",
+    "wa_float_label": "Hablar con Sião"
+  }
+};
+  let currentLang = localStorage.getItem('siaoLang') || 'pt';
+
+  function applyTranslations(lang) {
+    const dict = translations[lang];
+    if (!dict) return;
+    currentLang = lang;
+
+    document.documentElement.lang = dict.html_lang;
+    document.title = dict.meta_title;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+      const key = el.getAttribute('data-i18n-aria');
+      if (dict[key] !== undefined) el.setAttribute('aria-label', dict[key]);
+    });
+    document.querySelectorAll('[data-i18n-tag]').forEach(el => {
+      const key = el.getAttribute('data-i18n-tag');
+      if (dict[key] !== undefined) el.setAttribute('data-tag', dict[key]);
+    });
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+
+    localStorage.setItem('siaoLang', lang);
+    tick();
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyTranslations(btn.getAttribute('data-lang')));
+  });
+
+  applyTranslations(currentLang);
+  tick();
+  setInterval(tick, 1000);
+
+  // ===== Chat da Sião — DEMO DE PORTFÓLIO =====
+  // Nesta cópia pública, o chat NÃO se conecta ao webhook real de produção.
+  // Responde localmente com respostas de exemplo, para demonstrar a interface
+  // sem disparar a automação real (n8n) usada no site em produção.
+  const SIAO_DEMO_REPLIES = [
+    "Esta é uma demonstração de portfólio — aqui o Sião responde com mensagens de exemplo, sem se conectar à automação real da empresa.",
+    "No site em produção (guardadesiao.com), esta mesma interface se conecta a um fluxo n8n com IA para responder de verdade e escalar para um atendente humano quando necessário.",
+    "Quer ver o Sião funcionando de verdade? Acesse guardadesiao.com e fale com a gente pelo WhatsApp."
+  ];
+
+  const chatBody = document.getElementById('siaoChatBody');
+  const chatInput = document.getElementById('siaoChatInput');
+  const chatSend = document.getElementById('siaoChatSend');
+
+  function addBubble(text, who) {
+    const div = document.createElement('div');
+    div.className = 'bubble ' + who;
+    div.textContent = text;
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    return div;
+  }
+
+  function addTyping() {
+    const div = document.createElement('div');
+    div.className = 'bubble bot typing';
+    div.textContent = '...';
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    return div;
+  }
+
+  let demoReplyIndex = 0;
+
+  async function sendSiaoMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    addBubble(text, 'user');
+    chatInput.value = '';
+    chatInput.disabled = true;
+    chatSend.disabled = true;
+
+    const typingBubble = addTyping();
+
+    // Simula o tempo de resposta de uma IA real, sem chamar nenhum servidor.
+    await new Promise((resolve) => setTimeout(resolve, 700 + Math.random() * 500));
+
+    typingBubble.remove();
+    const reply = SIAO_DEMO_REPLIES[demoReplyIndex % SIAO_DEMO_REPLIES.length];
+    demoReplyIndex++;
+    addBubble(reply, 'bot');
+
+    chatInput.disabled = false;
+    chatSend.disabled = false;
+    chatInput.focus();
+  }
+
+  if (chatSend && chatInput) {
+    chatSend.addEventListener('click', sendSiaoMessage);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendSiaoMessage();
+    });
+  }
+
+</script>
+
+</body>
+</html>
