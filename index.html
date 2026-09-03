@@ -1249,7 +1249,11 @@
     "wa_float_label": "Hablar con Sião"
   }
 };
-  let currentLang = localStorage.getItem('siaoLang') || 'pt';
+  let currentLang = (function(){
+    var urlLang = new URLSearchParams(window.location.search).get('lang');
+    if (urlLang && translations[urlLang]) return urlLang;
+    return localStorage.getItem('siaoLang') || 'pt';
+  })();
 
   function applyTranslations(lang) {
     const dict = translations[lang];
